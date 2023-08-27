@@ -1,7 +1,7 @@
 --1. Define la función groupAnagrams tal que recibe una lista de String y devuelve una lista con los anagramas agrupados. 
 --Un anagrama es una palabra o frase formada al reorganizar las letras de otra palabra o frase, utilizando todas las letras originales exactamente una vez.
 
-groupAnagrams :: [ String ] -> [[ String ]]
+--groupAnagrams :: [ String ] -> [[ String ]]
     -- Ejemplo -
     -- > groupAnagrams [ " eat " ," tea " ," tan " ," ate " ," nat " ," bat " ]
     -- > [[ " eat " ," tea " ," ate " ] ,[ " tan " ," nat " ] ,[ " bat " ]]
@@ -11,7 +11,7 @@ groupAnagrams :: [ String ] -> [[ String ]]
 
 -- 2.Define la función subsets tal que recibe una lista de elementos únicos y devuelve el conjunto potencia.
 
-subsets :: [ a ] -> [[ a ]]
+--subsets :: [ a ] -> [[ a ]]
     --{ - Ejemplo -}
     -- > subsets [1 ,2 ,3]
     -- > [[] ,[3] ,[2] ,[2 ,3] ,[1] ,[1 ,3] ,[1 ,2] ,[1 ,2 ,3]]
@@ -23,7 +23,7 @@ subsets :: [ a ] -> [[ a ]]
 --Define la función majorityElem tal que recibe una lista y devuelve su elemento mayoritario.
 --La solución debe ser de complejidad O(n) en tiempo y O(1) en el espacio.
 
-majorityElem :: Eq a = > [ a ] -> a
+--majorityElem :: Eq a => [ a ] -> a
     --{ - Ejemplo -}
     -- > majorityElem [3 ,2 ,3]
     -- > 3
@@ -33,7 +33,7 @@ majorityElem :: Eq a = > [ a ] -> a
 
 --4. Define la función coins tal que recibe una lista de monedas de diferentes denominaciones y una cantidad total de dinero, y devuelve si es posible completar la cantidad usando únicamente ese tipo de monedas.   
 
-coins :: [Int] -> Int -> Bool
+--coins :: [Int] -> Int -> Bool
     -- { - Ejemplo -}
     -- > coins [2 ,5] 8
     -- > True
@@ -51,6 +51,17 @@ data BST a = Empty | Node a ( BST a ) ( BST a ) deriving Show
 --(b) El subárbol derecho contiene solo valores mayores que la raíz.
 --(c) Ambos subárboles deben ser árboles de búsqueda binarios.
 
+maxNodeValue :: BST Int -> Int
+maxNodeValue (Node v Empty Empty) = v
+maxNodeValue (Node v leftSubTree Empty) = maximum [(maxNodeValue leftSubTree), v]
+maxNodeValue (Node v Empty rightSubTree) = maximum [v, (maxNodeValue rightSubTree)]
+maxNodeValue (Node v leftSubTree rightSubTree) = maximum [(maxNodeValue leftSubTree), v, (maxNodeValue rightSubTree)]
+
+minNodeValue :: BST Int -> Int
+minNodeValue (Node v Empty Empty) = v
+minNodeValue (Node v leftSubTree Empty) = minimum [(minNodeValue leftSubTree), v]
+minNodeValue (Node v Empty rightSubTree) = minimum [v, (minNodeValue rightSubTree)]
+minNodeValue (Node v leftSubTree rightSubTree) = minimum [(minNodeValue leftSubTree), v, (minNodeValue rightSubTree)]
 
 isBST :: BST Int -> Bool
     --{ - Ejemplo -}
@@ -58,12 +69,17 @@ isBST :: BST Int -> Bool
     -- > True
     -- > isBST ( Node 3 ( Node 1 Empty ( Node 3 Empty Empty ) ) ( Node 4 Empty Empty ) )
     -- > False
+isBST (Empty) = True
+isBST (Node _ Empty Empty) = True
+isBST (Node v leftSubTree Empty) = ((maxNodeValue leftSubTree) < v) && (isBST leftSubTree)
+isBST (Node v Empty rightSubTree) = (v < (minNodeValue rightSubTree)) && (isBST rightSubTree)
+isBST (Node v leftSubTree rightSubTree) = ((maxNodeValue leftSubTree) < v) && (v < (minNodeValue rightSubTree)) && (isBST leftSubTree) && (isBST rightSubTree)
 
 
 
 --6. Define la función kthElem tal que recibe un árbol de búsqueda binaria y un número entero k, y devuelve el k-ésimo valor más pequeño.
 
-kthElem :: BST a -> Int -> a
+--kthElem :: BST a -> Int -> a
     --{ - Ejemplo -}
     -- > kthElem ( Node 3 ( Node 1 Empty ( Node 2 Empty Empty ) ) ( Node 4 Empty Empty ) ) 2
     -- > 2

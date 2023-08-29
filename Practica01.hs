@@ -1,3 +1,6 @@
+module Practica01 where
+import Data.List (sort, nub)
+
 --1. Define la función groupAnagrams tal que recibe una lista de String y devuelve una lista con los anagramas agrupados. 
 --Un anagrama es una palabra o frase formada al reorganizar las letras de otra palabra o frase, utilizando todas las letras originales exactamente una vez.
 
@@ -8,6 +11,19 @@
     -- > groupAnagrams [ " hello " ," " ," world " ," wldro " ," hlloe " ," a " ," aa " ]
     -- > [[ " hello " ," hlloe " ] ,[ " " ] ,[ " world " ," wldro " ] ,[ " a " ] ,[ " aa " ]]
 
+-- Función auxiliar para la función groupAnagrams.
+-- Esta función verifica que 2 cadenas tengan los mismos caracteres aunque estén en distinto orden.
+
+mismosCaracteres :: String -> String -> Bool
+mismosCaracteres cadena1 cadena2 = sort cadena1 == sort cadena2
+
+-- Función que agrupa todas aquellas cadenas que son anagramas dada una lista de cadenas.
+groupAnagrams :: [String] -> [[String]]
+groupAnagrams listaCadenas =
+  nub conjuntosCaracteres
+  where
+      conjuntosCaracteres = map snd [(str, filter (mismosCaracteres str) listaCadenas) | str <- listaCadenas]
+
 
 -- 2.Define la función subsets tal que recibe una lista de elementos únicos y devuelve el conjunto potencia.
 
@@ -17,7 +33,11 @@
     -- > [[] ,[3] ,[2] ,[2 ,3] ,[1] ,[1 ,3] ,[1 ,2] ,[1 ,2 ,3]]
     -- > subsets [ ’a ’ , ’b ’ , ’c ’ , ’d ’]
     -- > [ " " ," d " ," c " ," cd " ," b " ," bd " ," bc " ," bcd " ," a " ," ad " ," ac " ," acd " ," ab " ," abd " ," abc " ," abcd " ]
-
+-- Función que obtiene todas las posibles sublistas de una lista pasada como parámetro,
+-- las listas representan conjuntos de elementos de un mismo tipo
+subsets :: [a] -> [[a]]
+subsets [] = [[]]
+subsets (x:xs) = subsets xs ++ map (x:) (subsets xs)
 
 --3. El elemento mayoritario es el elemento que aparece más de ⌊n/2⌋ veces, donde n es la longitud de la lista. 
 --Define la función majorityElem tal que recibe una lista y devuelve su elemento mayoritario.

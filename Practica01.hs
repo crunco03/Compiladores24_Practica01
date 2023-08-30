@@ -116,3 +116,5 @@ kthElem (Node v leftSubTree rightSubTree) k
   where
     size Empty = 0
     size (Node _ left right) = 1 + size left + size right
+
+    

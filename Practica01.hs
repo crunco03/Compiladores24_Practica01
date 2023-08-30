@@ -103,6 +103,18 @@ isBST (Node v leftSubTree rightSubTree) = ((maxNodeValue leftSubTree) < v) && (v
     --{ - Ejemplo -}
     -- > kthElem ( Node 3 ( Node 1 Empty ( Node 2 Empty Empty ) ) ( Node 4 Empty Empty ) ) 2
     -- > 2
-    -- > kthElem ( Node 5 ( Node 3 ( Node 2 ( Node 1 Empty Empty ) Empty ) ( Node 4 Empty Empty ) )
-    -- ( Node 6 Empty Empty ) ) 4
+    -- > kthElem ( Node 5 ( Node 3 ( Node 2 ( Node 1 Empty Empty ) Empty ) ( Node 4 Empty Empty ) ) ( Node 6 Empty Empty ) ) 4
     -- > 4
+
+
+kthElem :: BST a -> Int -> a
+kthElem Empty _ = error "Árbol vacío"
+kthElem (Node v leftSubTree rightSubTree) k
+  | k <= size leftSubTree = kthElem leftSubTree k
+  | k == size leftSubTree + 1 = v
+  | otherwise = kthElem rightSubTree (k - size leftSubTree - 1)
+  where
+    size Empty = 0
+    size (Node _ left right) = 1 + size left + size right
+
+    

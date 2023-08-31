@@ -51,7 +51,8 @@ subsets (x:xs) = subsets xs ++ map (x:) (subsets xs)
     -- > 2
 
 
---4. Define la función coins tal que recibe una lista de monedas de diferentes denominaciones y una cantidad total de dinero, y devuelve si es posible completar la cantidad usando únicamente ese tipo de monedas.   
+--4. Define la función coins tal que recibe una lista de monedas de diferentes denominaciones y una cantidad total de dinero, 
+--y devuelve si es posible completar la cantidad usando únicamente ese tipo de monedas.   
 
 --coins :: [Int] -> Int -> Bool
     -- { - Ejemplo -}
@@ -60,6 +61,12 @@ subsets (x:xs) = subsets xs ++ map (x:) (subsets xs)
     -- > coins [2 ,4 ,6] 21
     -- > False
 
+coins :: [Int] -> Int -> Bool
+coins _ 0 = True  -- Si la cantidad total es 0, siempre es posible completarla.
+coins [] _ = False  -- Si la lista de monedas está vacía y la cantidad no es 0, no es posible.
+coins (coin:rest) amount
+    | amount < 0 = False  -- Si la cantidad se vuelve negativa, no es posible.
+    | otherwise = coins rest amount || coins (coin:rest) (amount - coin)
 
 
 ---5. Considera la siguiente definición de árbol binario:

@@ -12,12 +12,6 @@ import Data.Map (Map, empty, insertWith, elems)
     -- > groupAnagrams [ " hello " ," " ," world " ," wldro " ," hlloe " ," a " ," aa " ]
     -- > [[ " hello " ," hlloe " ] ,[ " " ] ,[ " world " ," wldro " ] ,[ " a " ] ,[ " aa " ]]
 
--- Función auxiliar para la función groupAnagrams.
--- Esta función verifica que 2 cadenas tengan los mismos caracteres aunque estén en distinto orden.
-
-mismosCaracteres :: String -> String -> Bool
-mismosCaracteres cadena1 cadena2 = sort cadena1 == sort cadena2
-
 -- Función que agrupa todas aquellas cadenas que son anagramas dada una lista de cadenas.
 groupAnagrams :: [String] -> [[String]]
 groupAnagrams listaCadenas =

@@ -42,7 +42,16 @@ subsets (x:xs) = subsets xs ++ map (x:) (subsets xs)
     -- > 3
     -- > majorityElem [2 ,2 ,1 ,1 ,1 ,2 ,2]
     -- > 2
+majorityElem :: Eq a => [ a ] -> a
+majorityElem [] = error "Lista vacia"
+majorityElem (x:xs) = findMajority x xs 1
 
+findMajority :: Eq a => a -> [ a ] -> Int  -> a
+findMajority elem [] _ = elem
+findMajority elem (x:xs) count
+    | count == 0 = findMajority x xs 1
+    | elem == x = findMajority elem xs (count + 1)
+    | otherwise = findMajority elem xs (count - 1) 
 
 --4. Define la función coins tal que recibe una lista de monedas de diferentes denominaciones y una cantidad total de dinero, 
 --y devuelve si es posible completar la cantidad usando únicamente ese tipo de monedas.   

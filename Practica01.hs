@@ -1,5 +1,6 @@
 module Practica01 where
 import Data.List (sort, nub)
+import Data.Map (Map, empty, insertWith, elems)
 
 --1. Define la función groupAnagrams tal que recibe una lista de String y devuelve una lista con los anagramas agrupados. 
 --Un anagrama es una palabra o frase formada al reorganizar las letras de otra palabra o frase, utilizando todas las letras originales exactamente una vez.
@@ -11,18 +12,10 @@ import Data.List (sort, nub)
     -- > groupAnagrams [ " hello " ," " ," world " ," wldro " ," hlloe " ," a " ," aa " ]
     -- > [[ " hello " ," hlloe " ] ,[ " " ] ,[ " world " ," wldro " ] ,[ " a " ] ,[ " aa " ]]
 
--- Función auxiliar para la función groupAnagrams.
--- Esta función verifica que 2 cadenas tengan los mismos caracteres aunque estén en distinto orden.
-
-mismosCaracteres :: String -> String -> Bool
-mismosCaracteres cadena1 cadena2 = sort cadena1 == sort cadena2
-
 -- Función que agrupa todas aquellas cadenas que son anagramas dada una lista de cadenas.
 groupAnagrams :: [String] -> [[String]]
 groupAnagrams listaCadenas =
-  nub conjuntosCaracteres
-  where
-      conjuntosCaracteres = map snd [(str, filter (mismosCaracteres str) listaCadenas) | str <- listaCadenas]
+    elems $ foldr (\cadena -> insertWith (++) (sort cadena) [cadena]) empty listaCadenas
 
 
 -- 2.Define la función subsets tal que recibe una lista de elementos únicos y devuelve el conjunto potencia.
@@ -80,15 +73,15 @@ data BST a = Empty | Node a ( BST a ) ( BST a ) deriving Show
 
 maxNodeValue :: BST Int -> Int
 maxNodeValue (Node v Empty Empty) = v
-maxNodeValue (Node v leftSubTree Empty) = maximum [(maxNodeValue leftSubTree), v]
-maxNodeValue (Node v Empty rightSubTree) = maximum [v, (maxNodeValue rightSubTree)]
-maxNodeValue (Node v leftSubTree rightSubTree) = maximum [(maxNodeValue leftSubTree), v, (maxNodeValue rightSubTree)]
+maxNodeValue (Node v leftSubTree Empty) = max (maxNodeValue leftSubTree) v
+maxNodeValue (Node v Empty rightSubTree) = max v (maxNodeValue rightSubTree)
+maxNodeValue (Node v leftSubTree rightSubTree) = maximum [maxNodeValue leftSubTree, v, maxNodeValue rightSubTree]
 
 minNodeValue :: BST Int -> Int
 minNodeValue (Node v Empty Empty) = v
-minNodeValue (Node v leftSubTree Empty) = minimum [(minNodeValue leftSubTree), v]
-minNodeValue (Node v Empty rightSubTree) = minimum [v, (minNodeValue rightSubTree)]
-minNodeValue (Node v leftSubTree rightSubTree) = minimum [(minNodeValue leftSubTree), v, (minNodeValue rightSubTree)]
+minNodeValue (Node v leftSubTree Empty) = min (minNodeValue leftSubTree) v
+minNodeValue (Node v Empty rightSubTree) = min v (minNodeValue rightSubTree)
+minNodeValue (Node v leftSubTree rightSubTree) = minimum [minNodeValue leftSubTree, v, minNodeValue rightSubTree]
 
 isBST :: BST Int -> Bool
     --{ - Ejemplo -}
@@ -96,11 +89,11 @@ isBST :: BST Int -> Bool
     -- > True
     -- > isBST ( Node 3 ( Node 1 Empty ( Node 3 Empty Empty ) ) ( Node 4 Empty Empty ) )
     -- > False
-isBST (Empty) = True
+isBST Empty = True
 isBST (Node _ Empty Empty) = True
-isBST (Node v leftSubTree Empty) = ((maxNodeValue leftSubTree) < v) && (isBST leftSubTree)
-isBST (Node v Empty rightSubTree) = (v < (minNodeValue rightSubTree)) && (isBST rightSubTree)
-isBST (Node v leftSubTree rightSubTree) = ((maxNodeValue leftSubTree) < v) && (v < (minNodeValue rightSubTree)) && (isBST leftSubTree) && (isBST rightSubTree)
+isBST (Node v leftSubTree Empty) = (maxNodeValue leftSubTree < v) && isBST leftSubTree
+isBST (Node v Empty rightSubTree) = (v < minNodeValue rightSubTree) && isBST rightSubTree
+isBST (Node v leftSubTree rightSubTree) = (maxNodeValue leftSubTree < v) && (v < minNodeValue rightSubTree) && isBST leftSubTree && isBST rightSubTree
 
 
 
@@ -124,4 +117,4 @@ kthElem (Node v leftSubTree rightSubTree) k
     size Empty = 0
     size (Node _ left right) = 1 + size left + size right
 
-    
+

@@ -1,6 +1,14 @@
+-- Miembros del equipo:
+-- Javier Alejandro Rivera Zavala 
+-- Ulises Rodríguez García
+-- Zurisadai Uribe García
+-- Sergio Vasconcelos Carranza 
+-- Gabriela Cruz Blanco
+
 module Practica01 where
-import Data.List (sort, nub)
-import Data.Map (Map, empty, insertWith, elems)
+import Data.List (sort)
+import Data.Map (empty, insertWith, elems)
+
 
 --1. Define la función groupAnagrams tal que recibe una lista de String y devuelve una lista con los anagramas agrupados. 
 --Un anagrama es una palabra o frase formada al reorganizar las letras de otra palabra o frase, utilizando todas las letras originales exactamente una vez.
@@ -12,7 +20,6 @@ import Data.Map (Map, empty, insertWith, elems)
     -- > groupAnagrams [ " hello " ," " ," world " ," wldro " ," hlloe " ," a " ," aa " ]
     -- > [[ " hello " ," hlloe " ] ,[ " " ] ,[ " world " ," wldro " ] ,[ " a " ] ,[ " aa " ]]
 
--- Función que agrupa todas aquellas cadenas que son anagramas dada una lista de cadenas.
 groupAnagrams :: [String] -> [[String]]
 groupAnagrams listaCadenas =
     elems $ foldr (\cadena -> insertWith (++) (sort cadena) [cadena]) empty listaCadenas
@@ -24,10 +31,9 @@ groupAnagrams listaCadenas =
     --{ - Ejemplo -}
     -- > subsets [1 ,2 ,3]
     -- > [[] ,[3] ,[2] ,[2 ,3] ,[1] ,[1 ,3] ,[1 ,2] ,[1 ,2 ,3]]
-    -- > subsets [ ’a ’ , ’b ’ , ’c ’ , ’d ’]
+    -- > subsets ['a','b','c','d']
     -- > [ " " ," d " ," c " ," cd " ," b " ," bd " ," bc " ," bcd " ," a " ," ad " ," ac " ," acd " ," ab " ," abd " ," abc " ," abcd " ]
--- Función que obtiene todas las posibles sublistas de una lista pasada como parámetro,
--- las listas representan conjuntos de elementos de un mismo tipo
+
 subsets :: [a] -> [[a]]
 subsets [] = [[]]
 subsets (x:xs) = subsets xs ++ map (x:) (subsets xs)
@@ -42,10 +48,12 @@ subsets (x:xs) = subsets xs ++ map (x:) (subsets xs)
     -- > 3
     -- > majorityElem [2 ,2 ,1 ,1 ,1 ,2 ,2]
     -- > 2
+
 majorityElem :: Eq a => [ a ] -> a
 majorityElem [] = error "Lista vacia"
 majorityElem (x:xs) = findMajority x xs 1
 
+-- Función auxiliar para la función majorityElem
 findMajority :: Eq a => a -> [ a ] -> Int  -> a
 findMajority elem [] _ = elem
 findMajority elem (x:xs) count
@@ -80,12 +88,20 @@ data BST a = Empty | Node a ( BST a ) ( BST a ) deriving Show
 --(b) El subárbol derecho contiene solo valores mayores que la raíz.
 --(c) Ambos subárboles deben ser árboles de búsqueda binarios.
 
+--{ - Ejemplo -}
+    -- > isBST ( Node 3 ( Node 1 Empty ( Node 2 Empty Empty ) ) ( Node 4 Empty Empty ) )
+    -- > True
+    -- > isBST ( Node 3 ( Node 1 Empty ( Node 3 Empty Empty ) ) ( Node 4 Empty Empty ) )
+    -- > False
+
+-- Función auxiliar para encontrar el valor máximo entre los nodos de un BST
 maxNodeValue :: BST Int -> Int
 maxNodeValue (Node v Empty Empty) = v
 maxNodeValue (Node v leftSubTree Empty) = max (maxNodeValue leftSubTree) v
 maxNodeValue (Node v Empty rightSubTree) = max v (maxNodeValue rightSubTree)
 maxNodeValue (Node v leftSubTree rightSubTree) = maximum [maxNodeValue leftSubTree, v, maxNodeValue rightSubTree]
 
+-- Función auxiliar para encontrar el valor mínimo entre los nodos de un BST
 minNodeValue :: BST Int -> Int
 minNodeValue (Node v Empty Empty) = v
 minNodeValue (Node v leftSubTree Empty) = min (minNodeValue leftSubTree) v
@@ -93,11 +109,6 @@ minNodeValue (Node v Empty rightSubTree) = min v (minNodeValue rightSubTree)
 minNodeValue (Node v leftSubTree rightSubTree) = minimum [minNodeValue leftSubTree, v, minNodeValue rightSubTree]
 
 isBST :: BST Int -> Bool
-    --{ - Ejemplo -}
-    -- > isBST ( Node 3 ( Node 1 Empty ( Node 2 Empty Empty ) ) ( Node 4 Empty Empty ) )
-    -- > True
-    -- > isBST ( Node 3 ( Node 1 Empty ( Node 3 Empty Empty ) ) ( Node 4 Empty Empty ) )
-    -- > False
 isBST Empty = True
 isBST (Node _ Empty Empty) = True
 isBST (Node v leftSubTree Empty) = (maxNodeValue leftSubTree < v) && isBST leftSubTree

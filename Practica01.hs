@@ -62,25 +62,25 @@ data BST a = Empty | Node a ( BST a ) ( BST a ) deriving Show
 -- Función auxiliar para encontrar el valor máximo entre los nodos de un BST.
 maxNodeValue :: BST Int -> Int
 maxNodeValue (Node v Empty Empty) = v
-maxNodeValue (Node v leftSubTree Empty) = max (maxNodeValue leftSubTree) v
-maxNodeValue (Node v Empty rightSubTree) = max v (maxNodeValue rightSubTree)
-maxNodeValue (Node v leftSubTree rightSubTree) = maximum [maxNodeValue leftSubTree, v, maxNodeValue rightSubTree]
+maxNodeValue (Node v leftSubTree Empty) = maximum [(maxNodeValue leftSubTree), v]
+maxNodeValue (Node v Empty rightSubTree) = maximum [v, (maxNodeValue rightSubTree)]
+maxNodeValue (Node v leftSubTree rightSubTree) = maximum [(maxNodeValue leftSubTree), v, (maxNodeValue rightSubTree)]
 
 -- Función auxiliar para encontrar el valor mínimo entre los nodos de un BST.
 minNodeValue :: BST Int -> Int
 minNodeValue (Node v Empty Empty) = v
-minNodeValue (Node v leftSubTree Empty) = min (minNodeValue leftSubTree) v
-minNodeValue (Node v Empty rightSubTree) = min v (minNodeValue rightSubTree)
-minNodeValue (Node v leftSubTree rightSubTree) = minimum [minNodeValue leftSubTree, v, minNodeValue rightSubTree]
+minNodeValue (Node v leftSubTree Empty) = minimum [(minNodeValue leftSubTree), v]
+minNodeValue (Node v Empty rightSubTree) = minimum [v, (minNodeValue rightSubTree)]
+minNodeValue (Node v leftSubTree rightSubTree) = minimum [(minNodeValue leftSubTree), v, (minNodeValue rightSubTree)]
 
 -- La función isBST recibe un árbol binario y devuelve si es un árbol de búsqueda 
 -- binario válido. 
 isBST :: BST Int -> Bool
-isBST Empty = True
+isBST (Empty) = True
 isBST (Node _ Empty Empty) = True
-isBST (Node v leftSubTree Empty) = (maxNodeValue leftSubTree < v) && isBST leftSubTree
-isBST (Node v Empty rightSubTree) = (v < minNodeValue rightSubTree) && isBST rightSubTree
-isBST (Node v leftSubTree rightSubTree) = (maxNodeValue leftSubTree < v) && (v < minNodeValue rightSubTree) && isBST leftSubTree && isBST rightSubTree
+isBST (Node v leftSubTree Empty) = ((maxNodeValue leftSubTree) < v) && (isBST leftSubTree)
+isBST (Node v Empty rightSubTree) = (v < (minNodeValue rightSubTree)) && (isBST rightSubTree)
+isBST (Node v leftSubTree rightSubTree) = ((maxNodeValue leftSubTree) < v) && (v < (minNodeValue rightSubTree)) && (isBST leftSubTree) && (isBST rightSubTree)
 
 
 -----------------------------------------------------------------------------------------

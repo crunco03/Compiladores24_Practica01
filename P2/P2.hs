@@ -1,6 +1,5 @@
 module P2 where
-
-import Data.Char
+import Data.Char(isAlpha,isDigit,isSpace)
 
 
 
@@ -37,7 +36,40 @@ lexString cs =
 data ASA = VarASA String | NumberASA Int | BooleanASA Bool | Op Token ASA ASA deriving Show
 type Stack = [ASA]
 
---lexer :: String -> [ Token ]
+scanner :: [Token] -> ASA
+scanner tokens = scannerAux tokens []
+
+
+
+scannerAux :: [Token] -> Stack -> ASA
+scannerAux [] (asa:_) = asa
+scannerAux (token:tokens) pila
+    | esOperando token = scannerAux tokens (convertirTokenASA token : pila)
+    | esOperador token = case pila of
+        (derecha : izquierda : pilaRestante) -> scannerAux tokens (Op token derecha izquierda : pilaRestante)
+        _ -> error "Expresión mal formada"
+    | otherwise = error "Token desconocido"
+
+esOperando :: Token -> Bool
+esOperando (Var _) = True
+esOperando (Number _) = True
+esOperando (Boolean _) = True
+esOperando _ = False
+
+esOperador :: Token -> Bool
+esOperador Sum = True
+esOperador Subs = True
+esOperador And = True
+esOperador Or = True
+esOperador Equal = True
+esOperador _ = False
+
+convertirTokenASA :: Token -> ASA
+convertirTokenASA (Var x) = VarASA x
+convertirTokenASA (Number n) = NumberASA n
+convertirTokenASA (Boolean b) = BooleanASA b
+convertirTokenASA _ = error "Token desconocido"
+
       
       
       

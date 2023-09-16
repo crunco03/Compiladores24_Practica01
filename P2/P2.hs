@@ -18,7 +18,7 @@ lexer ('+':cs) = Sum : lexer cs
 lexer ('-':cs) = Subs : lexer cs
 lexer ('&':'&':rest) = And : lexer rest
 lexer ('|':'|':rest) = Or : lexer rest
-lexer ('=':'=':cs) = Equal : lexer cs                   -- || lexer ('=':cs)...?
+lexer ('=':'=':cs) = Equal : lexer cs
 
 lexNum cs = Number (read num) : lexer rest
       where (num,rest) = span isDigit cs
@@ -87,25 +87,56 @@ data Type = Num | Bool deriving Show
 
 --constantFolding :: ASA -> ASA
 
-{-
+
 data Value = N Int | B Bool | S String
 instance Show Value where
-        show ( N n ) = show n
-        show ( B b ) = show b
-        show ( S s ) = show s
-    
+        show (N n) = show n
+        show (B b) = show b
+        show (S s) = show s
+
+tokenThreeAddress :: Token -> String
+tokenThreeAddress Sum = "+"
+tokenThreeAddress Subs = "-"
+tokenThreeAddress And = "&&"
+tokenThreeAddress Or = "||"
+tokenThreeAddress Equal = "=="
+
 data ThreeAddress = Assign String Value | Operation String String Token String
 instance Show ThreeAddress where
-        show ( Assign t v ) = show t ++ " = " ++ show v
-        show ( Operation t a op b ) = show t ++ " = " ++ show a ++ tokenThreeAddress op ++ show b
--}
-    
---fresh :: [Int] -> Int
+        show (Assign t v) = show t ++ " = " ++ show v
+        show (Operation t a op b) = show t ++ " = " ++ show a ++ tokenThreeAddress op ++ show b
 
---threeAddressAux :: ASA -> [Int] -> ([ ThreeAddress ] , String ,[ Int ])
+fresh :: [Int] -> Int
+fresh ts = head [n | n <- [0..], n `notElem` ts]
 
---threeAddress :: ASA -> [ ThreeAddress ]
+threeAddressAux :: ASA -> [Int] -> ([ThreeAddress],String,[Int])
+threeAddressAux (VarASA v) ts = (c',temp,i:ts)
+                                    where 
+                                        i = fresh ts
+                                        temp = "t" ++ show i
+                                        c' = [Assign temp (S v)]
+threeAddressAux (NumberASA n) ts = (c',temp,i:ts)
+                                    where 
+                                        i = fresh ts
+                                        temp = "t" ++ show i
+                                        c' = [Assign temp (N n)]
+threeAddressAux (BooleanASA b) ts = (c',temp,i:ts)
+                                    where 
+                                        i = fresh ts
+                                        temp = "t" ++ show i
+                                        c' = [Assign temp (B b)]
+threeAddressAux (Op op a b) ts = (a' ++ b' ++ c',temp,i:bs)
+                                    where 
+                                        (a',adA,as) = threeAddressAux a ts
+                                        (b',adB,bs) = threeAddressAux b as
+                                        i = fresh bs
+                                        temp = "t" ++ show i
+                                        c' = [Operation temp adA op adB]
 
+threeAddress :: ASA -> [ThreeAddress]
+threeAddress asa = trad
+                    where 
+                    (trad,temp,ts) = threeAddressAux asa []
 
 
 ---------------------------------- Generación de Código ----------------------------------

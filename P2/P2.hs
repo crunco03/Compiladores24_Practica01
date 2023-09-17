@@ -2,7 +2,6 @@ module P2 where
 import Data.Char(isAlpha,isDigit,isSpace)
 
 
-
 ---------------------------------- Análisis léxico ----------------------------------
 
 data Token = Var String | Number Int | Boolean Bool | Sum | Subs | And | Or | Equal 
@@ -20,16 +19,17 @@ lexer ('&':'&':rest) = And : lexer rest
 lexer ('|':'|':rest) = Or : lexer rest
 lexer ('=':'=':cs) = Equal : lexer cs
 
+lexNum :: String -> [Token]
 lexNum cs = Number (read num) : lexer rest
       where (num,rest) = span isDigit cs
 
+lexString :: String -> [Token]
 lexString cs =
    case span isAlpha cs of
       ("t", rest) -> Boolean (True) : lexer rest
       ("f", rest) -> Boolean (False) : lexer rest
       (var,rest)   -> Var (var) : lexer rest
-      
-      
+
       
 ---------------------------------- Análisis sintáctico ----------------------------------
 
@@ -38,8 +38,6 @@ type Stack = [ASA]
 
 scanner :: [Token] -> ASA
 scanner tokens = scannerAux tokens []
-
-
 
 scannerAux :: [Token] -> Stack -> ASA
 scannerAux [] (asa:_) = asa
@@ -71,17 +69,39 @@ convertirTokenASA (Boolean b) = BooleanASA b
 convertirTokenASA _ = error "Token desconocido"
 
       
-      
-      
 ---------------------------------- Análisis semántico ----------------------------------
 
 data Type = Num | Bool deriving Show
 
---typeCheckerAux :: ASA -> Type
+typeChecker :: ASA -> ASA
+typeChecker asa = typeCheckerAux asa `seq` asa
 
---typeChecker :: ASA -> ASA
-      
-      
+typeCheckerAux :: ASA -> Type
+typeCheckerAux (NumberASA _) = Num
+typeCheckerAux (VarASA _) = Num
+typeCheckerAux (BooleanASA _) = Bool
+typeCheckerAux (Op op a b) = 
+    case op of
+        Sum   -> case (ta, tb) of
+                     (Num, Num) -> Num
+                     _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador Sum"
+        Subs  -> case (ta, tb) of
+                     (Num, Num) -> Num
+                     _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador Subs"
+        And   -> case (ta, tb) of
+                     (Bool, Bool) -> Bool
+                     _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador And"
+        Or    -> case (ta, tb) of
+                     (Bool, Bool) -> Bool
+                     _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador Or"
+        Equal -> case (ta, tb) of
+                     (Num, Num) -> Bool
+                     (Bool, Bool) -> Bool
+                     _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador Equal"
+    where
+        ta = typeCheckerAux a
+        tb = typeCheckerAux b
+
       
 ---------------------------------- Optimización de Código Fuente ----------------------------------
 
@@ -99,7 +119,7 @@ tokenThreeAddress Sum = "+"
 tokenThreeAddress Subs = "-"
 tokenThreeAddress And = "&&"
 tokenThreeAddress Or = "||"
-tokenThreeAddress Equal = "=="
+tokenThreeAddress Equal = " == "
 
 data ThreeAddress = Assign String Value | Operation String String Token String
 instance Show ThreeAddress where

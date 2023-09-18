@@ -73,9 +73,12 @@ convertirTokenASA _ = error "Token desconocido"
 
 data Type = Num | Bool deriving Show
 
+-- Función TypeChecker recibe un ASA y devuelve dicho ASA si el tipado del programa es consistente.
 typeChecker :: ASA -> ASA
 typeChecker asa = typeCheckerAux asa `seq` asa
 
+-- Función TypeCheckerAux recibe un ASA y devuelve el tipo de la expresión únicamente si el tipado
+-- del programa es consistente. En otro caso arroja un error indicando el problema con el programa.
 typeCheckerAux :: ASA -> Type
 typeCheckerAux (NumberASA _) = Num
 typeCheckerAux (VarASA _) = Num

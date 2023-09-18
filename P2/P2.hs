@@ -108,7 +108,36 @@ typeCheckerAux (Op op a b) =
       
 ---------------------------------- Optimización de Código Fuente ----------------------------------
 
---constantFolding :: ASA -> ASA
+-- Función que que recibe un ASA y devuelve el ASA resultante de aplicarle plegado constante.
+constantFolding :: ASA -> ASA
+constantFolding (Op op left right) = foldOperation op (constantFolding left) (constantFolding right)
+constantFolding asa = asa
+
+-- Función que toma un token y dos ASA y realiza una operación definida, 
+-- combinando estos elementos para producir un nuevo árbol sintáctico abstracto.
+foldOperation :: Token -> ASA -> ASA -> ASA
+foldOperation Sum (NumberASA x) (NumberASA y) = NumberASA (x + y)
+foldOperation Subs (NumberASA x) (NumberASA y) = NumberASA (x - y)
+
+foldOperation Equal (NumberASA x) (NumberASA y) 
+    | x == y    = BooleanASA True
+    | otherwise = BooleanASA False
+
+foldOperation Equal (BooleanASA x) (BooleanASA y) 
+    | x == y    = BooleanASA True
+    | otherwise = BooleanASA False
+
+foldOperation And (BooleanASA True) r = r
+foldOperation And l (BooleanASA True) = l
+foldOperation And (BooleanASA False) _ = BooleanASA False
+foldOperation And _ (BooleanASA False) = BooleanASA False
+
+foldOperation Or (BooleanASA True) _ = BooleanASA True
+foldOperation Or _ (BooleanASA True) = BooleanASA True
+foldOperation Or (BooleanASA False) r = r
+foldOperation Or l (BooleanASA False) = l
+
+foldOperation op left right = Op op left right
 
 
 data Value = N Int | B Bool | S String

@@ -1,6 +1,14 @@
 module P2 where
 import Data.Char(isAlpha,isDigit,isSpace)
 
+-----------------------------------------------------------------------------------------
+-- Miembros del equipo:
+-- Gabriela Cruz Blanco
+-- Javier Alejandro Rivera Zavala
+-- Ulises Rodríguez García
+-- Zurisadai Uribe García
+-- Sergio Vasconcelos Carranza
+
 
 ---------------------------------- Análisis léxico ----------------------------------
 
@@ -216,6 +224,8 @@ operationToAsm Equal t a b = "EQ " ++ t ++ " " ++ a ++ " " ++ b
 -- let entrada = [Assign "t0" (S "var"), Assign "t1" (N 25), Operation "t2" "t0" Equal "t1"]
 -- putStr (assembly entrada)
 
-    ----- Extra ----------------------------------
 
---compile :: String -> String
+----------------------------------  Compilación (extra) ---------------------------------- 
+
+compile :: String -> String
+compile prog = assembly $ threeAddress $ constantFolding $ typeChecker $ scanner $ lexer prog

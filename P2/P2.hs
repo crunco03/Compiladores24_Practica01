@@ -212,6 +212,10 @@ operationToAsm And t a b = "AND " ++ t ++ " " ++ a ++ " " ++ b
 operationToAsm Or t a b = "OR " ++ t ++ " " ++ a ++ " " ++ b
 operationToAsm Equal t a b = "EQ " ++ t ++ " " ++ a ++ " " ++ b
 
+-- Para correr: primero ingresar la entrada y despues ponerlo con formato Así:
+-- let entrada = [Assign "t0" (S "var"), Assign "t1" (N 25), Operation "t2" "t0" Equal "t1"]
+-- putStr (assembly entrada)
+
     ----- Extra ----------------------------------
 
 --compile :: String -> String

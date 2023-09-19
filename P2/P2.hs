@@ -99,7 +99,6 @@ typeCheckerAux (Op op a b) =
                      _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador Or"
         Equal -> case (ta, tb) of
                      (Num, Num) -> Bool
-                     (Bool, Bool) -> Bool
                      _ -> error $ "El tipo de los argumentos " ++ show a ++ " y " ++ show b ++ " no son los esperados para el operador Equal"
     where
         ta = typeCheckerAux a
@@ -120,10 +119,6 @@ foldOperation Sum (NumberASA x) (NumberASA y) = NumberASA (x + y)
 foldOperation Subs (NumberASA x) (NumberASA y) = NumberASA (x - y)
 
 foldOperation Equal (NumberASA x) (NumberASA y) 
-    | x == y    = BooleanASA True
-    | otherwise = BooleanASA False
-
-foldOperation Equal (BooleanASA x) (BooleanASA y) 
     | x == y    = BooleanASA True
     | otherwise = BooleanASA False
 
@@ -151,7 +146,7 @@ tokenThreeAddress Sum = "+"
 tokenThreeAddress Subs = "-"
 tokenThreeAddress And = "&&"
 tokenThreeAddress Or = "||"
-tokenThreeAddress Equal = " == "
+tokenThreeAddress Equal = "=="
 
 data ThreeAddress = Assign String Value | Operation String String Token String
 instance Show ThreeAddress where

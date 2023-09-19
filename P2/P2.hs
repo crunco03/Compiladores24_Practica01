@@ -194,9 +194,29 @@ threeAddress asa = trad
 ---------------------------------- Generación de Código ----------------------------------
 
 --assembly :: [ ThreeAddress ] -> String
+-- Función assembly
+assembly :: [ThreeAddress] -> String
+assembly prog = unlines $ map toAsm prog
 
+-- Función toAssembly
+toAsm :: ThreeAddress -> String
+toAsm (Assign t v) = "MOV " ++ t ++ " " ++ valueToString v
+toAsm (Operation t a op b) = operationToAsm op t a b
 
+-- Función auxiliar para convertir valores en cadenas
+valueToString :: Value -> String
+valueToString (N n) = show n
+valueToString (S s) = show s
+valueToString (B b) = show b
 
----------------------------------- Extra ----------------------------------
+-- Función auxiliar para traducir operaciones a lenguaje ensamblador
+operationToAsm :: Token -> String -> String -> String -> String
+operationToAsm Sum t a b = "ADD " ++ t ++ " " ++ a ++ " " ++ b
+operationToAsm Subs t a b = "SUBS " ++ t ++ " " ++ a ++ " " ++ b
+operationToAsm And t a b = "AND " ++ t ++ " " ++ a ++ " " ++ b
+operationToAsm Or t a b = "OR " ++ t ++ " " ++ a ++ " " ++ b
+operationToAsm Equal t a b = "EQ " ++ t ++ " " ++ a ++ " " ++ b
+
+    ----- Extra ----------------------------------
 
 --compile :: String -> String

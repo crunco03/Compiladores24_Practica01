@@ -1,3 +1,11 @@
+-----------------------------------------------------------------------------------------
+-- Miembros del equipo:
+-- Gabriela Cruz Blanco
+-- Javier Alejandro Rivera Zavala
+-- Ulises Rodríguez García
+-- Zurisadai Uribe García
+-- Sergio Vasconcelos Carranza
+-----------------------------------------------------------------------------------------
 {
 module HappyParser where
 

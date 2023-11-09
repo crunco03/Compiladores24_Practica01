@@ -52,8 +52,19 @@ parserAux (Number n:xs) (Q 12:ys) ws = parserAux xs (Q 11:Q 12:ys) (T (Number n)
 --Verificamos el estado en el que nos encontramos
 --Verificamos que los simbolos y estados que vamos a descartar son correctos
 --Continuamos la derivacion reemplazando estados y simbolos
+
 parserAux [] (Q 4:ys) (T Skip:ws) = parserAux [] (Q 2:ys) (PC:ws)
 parserAux [] (Q 2:ys) (PC:ws) = parserAux [] (Q 1:ys) (C:ws)
+
+
+parserAux xs (Q 5:ys) ws = parserAux xs (Q 7:ys) (T Seq:ws)
+
+parserAux xs (Q 5:ys) ws = parserAux xs (Q 7:ys) (T Skip:ws)
+
+parserAux xs (Q 12:ys) ws = parserAux xs (Q 7:ys) (T Sum:ws)
+
+parserAux xs (Q 10:ys) (T (Loc n):ws) = parserAux xs (Q 7:ys) (T (Loc n):ws)
+
 
 --ACCEPT
 parserAux [] (Q 1:ys) ws = True

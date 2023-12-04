@@ -57,10 +57,17 @@ checkEqualTypes x y expectedType
   | otherwise = Bool
 
 
+--checkAssignTypes :: ASA -> ASA -> Type
+--checkAssignTypes x y  
+  -- | not (compareTypes (typeCheckerAux y) Num) = error $ "El tipo de " ++ show y ++ " no es el esperado"
+  -- | otherwise = Void
+
 checkAssignTypes :: ASA -> ASA -> Type
-checkAssignTypes x y 
+checkAssignTypes (Loc _) y
   | not (compareTypes (typeCheckerAux y) Num) = error $ "El tipo de " ++ show y ++ " no es el esperado"
   | otherwise = Void
+checkAssignTypes x _ = error $ "Se esperaba una variable de tipo Loc, pero se encontró " ++ show x
+
 
 
 checkIfThenElseTypes :: ASA -> ASA -> ASA -> Type

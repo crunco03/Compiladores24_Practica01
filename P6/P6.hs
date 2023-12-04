@@ -29,8 +29,8 @@ typeCheckerAux Skip = Void
 typeCheckerAux (Sum x y) = checkBinaryTypes x y Num
 typeCheckerAux (And p q) = checkBinaryTypes p q Bool
 typeCheckerAux (Not p) = checkUnaryType p Bool
-typeCheckerAux (Equal p q) = checkBinaryTypes p q Num
-typeCheckerAux (Assign x y) = checkBinaryTypes x y Num
+typeCheckerAux (Equal p q) = checkEqualTypes p q Num
+typeCheckerAux (Assign x y) = checkAssignTypes x y
 typeCheckerAux (IfThenElse p q r) = checkIfThenElseTypes p q r
 typeCheckerAux (Seq p q) = checkSeqTypes p q
 typeCheckerAux (WhileDo p q) = checkWhileTypes p q
@@ -48,6 +48,19 @@ checkUnaryType x expectedType =
     if not (compareTypes (typeCheckerAux x) expectedType)
     then error $ "El tipo de " ++ show x ++ " no es el esperado"
     else expectedType
+
+
+checkEqualTypes :: ASA -> ASA -> Type -> Type
+checkEqualTypes x y expectedType
+  | not (compareTypes (typeCheckerAux x) expectedType) = error $ "El tipo de " ++ show x ++ " no es el esperado"
+  | not (compareTypes (typeCheckerAux y) expectedType) = error $ "El tipo de " ++ show y ++ " no es el esperado"
+  | otherwise = Bool
+
+
+checkAssignTypes :: ASA -> ASA -> Type
+checkAssignTypes x y 
+  | not (compareTypes (typeCheckerAux y) Num) = error $ "El tipo de " ++ show y ++ " no es el esperado"
+  | otherwise = Void
 
 
 checkIfThenElseTypes :: ASA -> ASA -> ASA -> Type
